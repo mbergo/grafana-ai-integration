@@ -1,0 +1,54 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Linux System Monitoring{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="display-4">Linux System Monitoring</h1>
+    <button id="refresh-btn" type="button" class="btn btn-primary">Refresh System Data</button>
+    <button id="query-gpt4-btn" type="button" class="btn btn-success">Get GPT-4 Suggestions</button>
+
+    <div id="system-data" class="mt-4">
+      <h2>System Data</h2>
+      <pre id="system-data-json"></pre>
+    </div>
+
+    <div id="gpt4-suggestions" class="mt-4">
+      <h2>GPT-4 Suggestions</h2>
+      <div class="card custom-elevation">
+        <div class="card-body">
+          <p id="gpt4-suggestions-text" class="card-text"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .custom-elevation {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.12);
+    }
+  </style>
+
+  <script>
+    document.getElementById('refresh-btn').addEventListener('click', function () {
+      fetch('/get_system_data')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('system-data-json').textContent = JSON.stringify(data, null, 2);
+        });
+    });
+
+    document.getElementById('query-gpt4-btn').addEventListener('click', function () {
+      fetch('/query_gpt4')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('gpt4-suggestions-text').textContent = data.suggestions;
+        });
+    });
+
+    // Load system data when the page is loaded
+    window.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('refresh-btn').click();
+    });
+  </script>
+{% endblock %}
